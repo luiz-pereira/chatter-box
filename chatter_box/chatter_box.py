@@ -7,8 +7,8 @@ from threading import Thread
 
 from websockets.sync.client import connect
 
-from audio_capture import AudioCapture
-from audio_player import Player
+from chatter_box.audio_capture import AudioCapture
+from chatter_box.audio_player import Player
 
 SAMPLE_RATE = 16000
 CHUNK_SIZE = 100  # 100ms
@@ -90,6 +90,7 @@ class ChatterBox:
         }
 
     def session_update(self, instructions):
+        instructions = instructions or self._default_instructions()
         return {
             "type": "session.update",
             "session": {
@@ -98,7 +99,10 @@ class ChatterBox:
             },
         }
 
-
-if __name__ == "__main__":
-    playground = ChatterBox()
-    playground.run()
+    def _default_instructions(self):
+        return """
+        - Capture the user's tone and intent and match it. If he's angry, being playfully aggressive. If he's whispering, do the same.
+        - Try to be as human as possible. If the user is being funny, play along.
+        - You're here to serve, so do as the user says. If he asks you to do something, do it.'
+        - Remember you're speaking in a real voice, not a text.
+        """
